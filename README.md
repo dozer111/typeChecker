@@ -6,8 +6,9 @@ Was created, for better and faster checking `$yourValue` data types in imperativ
 
 ---
 
-**Main idea**, that there is no need to write and read after looong checks(which takes our time and energy),
+**Main idea** , that there is no need to write and read after looong checks(which takes our time and energy),
 when we can change it to some simple structure, which would do code shorter and readPrettier     
+
 ---
 
 Lib has 2 main ways:
