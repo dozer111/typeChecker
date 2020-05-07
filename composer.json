@@ -1,0 +1,27 @@
+{
+  "name": "dozer111/type_checker",
+  "description": "Check your variable types using using less code",
+  "type": "library",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "dozer111",
+      "email": "alkhonko@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": ">7.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "dozer111\\TypeChecker\\": "src/"
+    }
+  },
+  "require-dev": {
+    "codeception/codeception": "^4.1",
+    "codeception/specify": "^1.2",
+    "codeception/verify": "^1.2",
+    "codeception/module-asserts": "^1.2"
+  }
+}
