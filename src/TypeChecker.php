@@ -5,21 +5,25 @@ namespace dozer111\TypeChecker;
 class TypeChecker
 {
 
-    public const TYPE_STRING = 'string';
-    public const TYPE_INT = 'integer';
-    public const TYPE_BOOL = 'boolean';
-    public const TYPE_DOUBLE = 'double';
-    public const TYPE_FLOAT = 'float';
-    public const TYPE_OBJECT = 'object';
-    public const TYPE_RESOURCE = 'resource';
-    public const TYPE_ARRAY = 'array';
-    public const TYPE_NULL = 'NULL';
-    public const TYPE_NUMERIC = 'numeric';
+    public const TYPE_STRING = __STRING__;
+    public const TYPE_INT = __INTEGER__;
+    public const TYPE_BOOL = __BOOLEAN__;
+    public const TYPE_DOUBLE = __DOUBLE__;
+    public const TYPE_FLOAT = __FLOAT__;
+    public const TYPE_OBJECT = __OBJECT__;
+    public const TYPE_RESOURCE = __RESOURCE__;
+    public const TYPE_ARRAY = __ARRAY__;
+    public const TYPE_NULL = __NULL__;
+    public const TYPE_NUMERIC = __NUMERIC__;
 
 
     /**
      * MultiChecking of value
      *
+     * @param $value
+     * @param array $types
+     * @param bool $nullable
+     * @return bool
      * @example
      * $myVal = 'someMyVal';
      * if(TypeChecker::check($myVal,[TypeChecker::TYPE_STRING,TypeChecker::TYPE_NULL])
@@ -31,13 +35,11 @@ class TypeChecker
      * if(is_string($myVal) || is_null($myVal) .......)
      *
      *
-     * @param $value
-     * @param array $types
-     * @return bool
      */
-    public static function check($value, array $types): bool
+    public static function check($value, array $types, bool $nullable = false): bool
     {
         $valueType = gettype($value);
+        $types = self::setupTypes($types, $nullable);
 
         $check = in_array($valueType, $types);
         if ($check === false && $valueType === self::TYPE_OBJECT) {
@@ -48,9 +50,13 @@ class TypeChecker
 
         return $check;
     }
+
     /**
      * Checks value, and if it`s not right type, throw exception
      *
+     * @param $value
+     * @param array $types
+     * @return void
      * @example
      * // before
      * $someVal = 123;
@@ -67,73 +73,103 @@ class TypeChecker
      * // .... code here
      *
      *
-     * @param $value
-     * @param array $types
-     * @return void
      */
-    public static function hardCheck($value, array $types): void
+    public static function hardCheck($value, array $types, bool $nullable = false): void
     {
-        if (!self::check($value, $types)) {
+        if (!self::check($value, $types, $nullable)) {
             self::throwHardCheckError();
         }
     }
-    public static function checkObject($value, string $className = null): bool
+
+    public static function checkObject($value, string $className = null, bool $nullable = false): bool
     {
+        if ($nullable && is_null($value))
+            return true;
+
         $check = is_object($value);
         if ($className)
             $check = $check && ($value instanceof $className);
 
         return $check;
     }
-    public static function hardCheckObject($value, string $className = null): void
+
+    public static function hardCheckObject($value, string $className = null, bool $nullable = false): void
     {
-        self::checkObject($value, $className) || self::throwHardCheckError();
+        self::checkObject($value, $className, $nullable) || self::throwHardCheckError();
     }
-    public static function hardCheckString($value): void
+
+    public static function hardCheckString($value, bool $nullable = false): void
     {
-        self::hardCheck($value, [self::TYPE_STRING]);
+        self::hardCheck($value, [self::TYPE_STRING], $nullable);
     }
-    public static function hardCheckInt($value): void
+
+    public static function hardCheckInt($value, bool $nullable = false): void
     {
-        self::hardCheck($value, [self::TYPE_INT]);
+        self::hardCheck($value, [self::TYPE_INT], $nullable);
     }
-    public static function hardCheckBool($value): void
+
+    public static function hardCheckBool($value, bool $nullable = false): void
     {
-        self::hardCheck($value, [self::TYPE_BOOL]);
+        self::hardCheck($value, [self::TYPE_BOOL], $nullable);
     }
-    public static function hardCheckDouble($value): void
+
+    public static function hardCheckDouble($value, bool $nullable = false): void
     {
-        self::hardCheck($value, [self::TYPE_DOUBLE]);
+        self::hardCheck($value, [self::TYPE_DOUBLE], $nullable);
     }
+
     /**
      * @see https://www.php.net/manual/en/function.gettype.php#refsect1-function.gettype-returnvalues
      * @param $value
      * @return void
      */
-    public static function hardCheckFloat($value): void
+    public static function hardCheckFloat($value, bool $nullable = false): void
     {
-        self::hardCheckDouble($value);
+        self::hardCheckDouble($value, $nullable);
     }
-    public static function hardCheckArray($value): void
+
+    public static function hardCheckArray($value, bool $nullable = false): void
     {
-        self::hardCheck($value,[self::TYPE_ARRAY]);
+        self::hardCheck($value, [self::TYPE_ARRAY], $nullable);
     }
-    public static function hardCheckResource($value): void
+
+    public static function hardCheckResource($value, bool $nullable = false): void
     {
-        self::hardCheck($value,[self::TYPE_RESOURCE]);
+        self::hardCheck($value, [self::TYPE_RESOURCE], $nullable);
     }
+
     public static function hardCheckNull($value): void
     {
-        self::hardCheck($value,[self::TYPE_NULL]);
+        self::hardCheck($value, [self::TYPE_NULL]);
     }
-    public static function checkNumeric($value): bool
+
+    public static function checkNumeric($value, bool $nullable = false): bool
     {
-        return is_numeric($value);
+        $condition = is_numeric($value);
+        return ($nullable)
+            ? $condition || is_null($value)
+            : $condition;
     }
-    public static function hardCheckNumeric($value): void
+
+    public static function hardCheckNumeric($value, bool $nullable = false): void
     {
-        self::hardCheck($value,[self::TYPE_NUMERIC]);
+        self::hardCheck($value, [self::TYPE_NUMERIC], $nullable);
     }
+
+
+    protected static function setupTypes(array $types, bool $nullable): array
+    {
+        return ($nullable)
+            ? array_merge($types, [self::TYPE_NULL])
+            : $types;
+    }
+
+    protected static function checkObjects($value, array $types)
+    {
+        $valueClassName = get_class($value);
+        return in_array($valueClassName, $types) && self::checkObject($value, $valueClassName);
+    }
+
     /**
      * Change it to throw your exception
      * @return void
@@ -142,10 +178,4 @@ class TypeChecker
     {
         throw new \InvalidArgumentException('Value has wrong type');
     }
-    protected static function checkObjects($value, array $types)
-    {
-        $valueClassName = get_class($value);
-        return in_array($valueClassName, $types) && self::checkObject($value, $valueClassName);
-    }
-
 }

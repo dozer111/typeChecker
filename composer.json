@@ -14,6 +14,9 @@
     "php": ">7.1"
   },
   "autoload": {
+    "files": [
+      "src/constants.php"
+    ],
     "psr-4": {
       "dozer111\\TypeChecker\\": "src/"
     }
