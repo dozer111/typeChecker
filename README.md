@@ -13,8 +13,16 @@ when we can change it to some simple structure, which would do code shorter and 
 
 Lib has 2 main ways:
 * **check**
-* **hardCheck** => check, and if false -> throw exception
-
+* **hardCheck/guard** => check, and if false -> throw exception    
+```php
+TypeChecker::hardCheck($value,[__INTEGER__,__STRING__]);
+TypeChecker::hardCheckInt($value,[__INTEGER__,__STRING__]);
+TypeChecker::hardCheckString($value,[__INTEGER__,__STRING__]);
+// or same, but with synonyms
+TypeChecker::guard($value,[__INTEGER__,__STRING__]);
+TypeChecker::guardInt($value,[__INTEGER__,__STRING__]);
+TypeChecker::guardString($value,[__INTEGER__,__STRING__]);
+```
 
 
 
@@ -40,8 +48,9 @@ if(is_int($value) || is_string($value))
     throw new SomeYourException();
 }
 
-// now
+// now hardCheck or guard
 TypeChecker::hardCheck($value,[__INTEGER__,__STRING__]);
+TypeChecker::guard($value,[__INTEGER__,__STRING__]);
 ```
 
 ### Example2 => value + nullable

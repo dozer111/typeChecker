@@ -81,6 +81,7 @@ class TypeChecker
         }
     }
 
+
     public static function checkObject($value, string $className = null, bool $nullable = false): bool
     {
         if ($nullable && is_null($value))
@@ -98,25 +99,30 @@ class TypeChecker
         self::checkObject($value, $className, $nullable) || self::throwHardCheckError();
     }
 
+
     public static function hardCheckString($value, bool $nullable = false): void
     {
         self::hardCheck($value, [self::TYPE_STRING], $nullable);
     }
+
 
     public static function hardCheckInt($value, bool $nullable = false): void
     {
         self::hardCheck($value, [self::TYPE_INT], $nullable);
     }
 
+
     public static function hardCheckBool($value, bool $nullable = false): void
     {
         self::hardCheck($value, [self::TYPE_BOOL], $nullable);
     }
 
+
     public static function hardCheckDouble($value, bool $nullable = false): void
     {
         self::hardCheck($value, [self::TYPE_DOUBLE], $nullable);
     }
+
 
     /**
      * @see https://www.php.net/manual/en/function.gettype.php#refsect1-function.gettype-returnvalues
@@ -128,20 +134,24 @@ class TypeChecker
         self::hardCheckDouble($value, $nullable);
     }
 
+
     public static function hardCheckArray($value, bool $nullable = false): void
     {
         self::hardCheck($value, [self::TYPE_ARRAY], $nullable);
     }
+
 
     public static function hardCheckResource($value, bool $nullable = false): void
     {
         self::hardCheck($value, [self::TYPE_RESOURCE], $nullable);
     }
 
+
     public static function hardCheckNull($value): void
     {
         self::hardCheck($value, [self::TYPE_NULL]);
     }
+
 
     public static function checkNumeric($value, bool $nullable = false): bool
     {
@@ -154,6 +164,62 @@ class TypeChecker
     public static function hardCheckNumeric($value, bool $nullable = false): void
     {
         self::hardCheck($value, [self::TYPE_NUMERIC], $nullable);
+    }
+
+
+    public static function guard($value, array $types, bool $nullable = false): void
+    {
+        self::hardCheck($value, $types, $nullable);
+    }
+
+    public static function guardObject($value, string $className = null, bool $nullable = false): void
+    {
+        self::hardCheckObject($value, $className, $nullable);
+    }
+
+    public static function guardString($value, bool $nullable = false): void
+    {
+        self::hardCheckString($value, $nullable);
+    }
+
+    public static function guardInt($value, bool $nullable = false): void
+    {
+        self::hardCheckInt($value, $nullable);
+    }
+
+    public static function guardArray($value, bool $nullable = false): void
+    {
+        self::hardCheckArray($value, $nullable);
+    }
+
+    public static function guardResource($value, bool $nullable = false): void
+    {
+        self::hardCheckResource($value, $nullable);
+    }
+
+    public static function guardNull($value): void
+    {
+        self::hardCheckNull($value);
+    }
+
+    public static function guardNumeric($value, bool $nullable = false): void
+    {
+        self::hardCheckNumeric($value, $nullable);
+    }
+
+    public static function guardBool($value, bool $nullable = false): void
+    {
+        self::hardCheckBool($value, $nullable);
+    }
+
+    public static function guardDouble($value, bool $nullable = false): void
+    {
+        self::hardCheckDouble($value, $nullable);
+    }
+
+    public static function guardFloat($value, bool $nullable = false): void
+    {
+        self::hardCheckFloat($value, $nullable);
     }
 
 
